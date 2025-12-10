@@ -22,7 +22,7 @@ const PORT = process.env.PORT || 8000;
 const MONGODB_URI =
   process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/Event";
 
-const CLIENT_ORIGIN = "http://localhost:5173"
+const CLIENT_ORIGIN = "https://kiris-ka-gana-sunega.vercel.app/"
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@example.com";
 const SMTP_USER = process.env.SMTP_USER || "";
