@@ -84,6 +84,8 @@ if (SMTP_USER && SMTP_PASS) {
 // Mount admin routes (protected inside adminRoutes.js)
 app.use("/api/admin", adminRoutes);
 
+app.get("/", () => console.log(`Server is running...`));
+
 // GET: all events
 app.get("/api/events", async (req, res) => {
   try {
