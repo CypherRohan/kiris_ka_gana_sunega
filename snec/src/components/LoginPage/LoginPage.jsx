@@ -29,7 +29,7 @@ const LoginPage = ({ setIsAuthenticated }) => {
     const password = e.target.password.value.trim();
 
     try {
-      const response = await fetch('http://localhost:8000/api/login', {
+      const response = await fetch('https://kiris-ka-gana-sunega.onrender.com/api/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
