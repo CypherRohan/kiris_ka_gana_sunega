@@ -6,7 +6,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const moment = require("moment");
 const PDFDocument = require("pdfkit");
-const nodemailer = require("nodemailer");
+const sgMail = require('@sendgrid/mail')
 
 const Listing = require("./models/listing.js");
 const User = require("./models/user.js");
@@ -53,49 +53,8 @@ mongoose
     process.exit(1);
   });
 
-// ---------- NODEMAILER TRANSPORT ----------
-
-let transporter = null;
-
-if (SMTP_USER && SMTP_PASS) {
-  // transporter = nodemailer.createTransport({
-  //   service: "gmail", // change if you use another provider
-  //   auth: {
-  //     user: SMTP_USER,
-  //     pass: SMTP_PASS,
-  //   },
-  // });
-
-  // transporter.verify((error, success) => {
-  //   if (error) {
-  //     console.error("❌ Error with mail transporter:", error.message);
-  //   } else {
-  //     console.log("✅ Mail transporter ready");
-  //   }
-  // });
-  
-  transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
-    }
-  });
-
-  // verify smtp transporter
-  (async () => {
-    try {
-      await transporter.verify();
-      console.log('SMTP verified ✅');
-    } catch (err) {
-      console.error('SMTP verify failed:', err);
-    }
-  })();
-} else {
-  console.warn(
-    "⚠️ SMTP_USER / SMTP_PASS not set. Signup approval emails will NOT be sent."
-  );
-}
+// ---------- SENDGRID MAIL SERVICE ----------
+sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
 // ---------- ROUTES ----------
 
@@ -221,31 +180,21 @@ app.post("/api/signup", async (req, res) => {
         await pendingSignup.create({ email, username });
 
         // Notify admin (if transporter configured)
-        if (transporter) {
-          await transporter.sendMail(
-            {
-              from: SMTP_USER,
-              to: ADMIN_EMAIL,
-              subject: "New Signup Request Pending Approval",
-              text: `A new user has requested signup.\nUsername: ${username}\nEmail: ${email}`,
-            },
-            (err, info) => {
-              if (err) {
-                console.error("Error sending admin notification:", err);
-              } else {
-                console.log(
-                  "Admin notified of pending signup:",
-                  info.response
-                );
-              }
-            }
-          );
-
-        } else {
-          console.warn(
-            "⚠️ Signup pending created but email not sent (no SMTP config)."
-          );
+        const msg = {
+          to: ADMIN_EMAIL,
+          from: 'stacknovaa@gmail.com',
+          subject: "New Signup Request Pending Approval",
+          text: `A new user has requested signup.\nUsername: ${username}\nEmail: ${email}`,
         }
+        
+        sgMail
+        .send(msg)
+        .then(() => {
+          console.log('Email sent')
+        })
+        .catch((error) => {
+          console.error('error in sending mail',error);
+        });
       }
       return res
         .status(403)
