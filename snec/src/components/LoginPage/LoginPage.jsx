@@ -21,7 +21,7 @@ const LoginPage = ({ setIsAuthenticated }) => {
       }
       // Store admin secret in sessionStorage
       sessionStorage.setItem('adminSecret', adminSecret);
-      const response = await fetch('/api/admin/pending-signups', {
+      const response = await fetch('https://kiris-ka-gana-sunega.onrender.com/api/admin/pending-signups', {
         headers: {
           'Content-Type': 'application/json',
           'x-admin-secret': adminSecret,

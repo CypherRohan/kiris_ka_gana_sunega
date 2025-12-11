@@ -37,7 +37,7 @@ router.get("/pending-signups", async (req, res) => {
   try {
     const pendings = await pendingSignup.find();
     res.json(pendings);
-  } catch (err) {
+  } catch (err) {``
     res.status(500).json({
       message: "Error fetching pending signups",
       error: err.message,
