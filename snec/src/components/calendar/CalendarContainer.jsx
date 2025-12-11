@@ -19,7 +19,7 @@ export default function CalendarContainer() {
   useEffect(() => {
     async function fetchEvents() {
       try {
-        const response = await fetch("https://kiris-ka-gana-sunega.onrender.com//api/events");
+        const response = await fetch("https://kiris-ka-gana-sunega.onrender.com/api/events");
         if (!response.ok) throw new Error("Failed to fetch events");
         const data = await response.json();
         setEvents(data.map(ev => ({
