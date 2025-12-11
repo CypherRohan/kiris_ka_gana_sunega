@@ -83,12 +83,14 @@ if (SMTP_USER && SMTP_PASS) {
   });
 
   // verify smtp transporter
-  try {
-    await transporter.verify();
-    console.log('SMTP verified ✅');
-  } catch(err) {
-    console.error('SMTP verify failed:', err);
-  }
+  (async () => {
+    try {
+      await transporter.verify();
+      console.log('SMTP verified ✅');
+    } catch (err) {
+      console.error('SMTP verify failed:', err);
+    }
+  })();
 } else {
   console.warn(
     "⚠️ SMTP_USER / SMTP_PASS not set. Signup approval emails will NOT be sent."
