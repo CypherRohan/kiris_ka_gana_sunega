@@ -58,21 +58,35 @@ mongoose
 let transporter = null;
 
 if (SMTP_USER && SMTP_PASS) {
-  transporter = nodemailer.createTransport({
-    service: "gmail", // change if you use another provider
-    auth: {
-      user: SMTP_USER,
-      pass: SMTP_PASS,
-    },
-  });
+  // transporter = nodemailer.createTransport({
+  //   service: "gmail", // change if you use another provider
+  //   auth: {
+  //     user: SMTP_USER,
+  //     pass: SMTP_PASS,
+  //   },
+  // });
 
-  transporter.verify((error, success) => {
-    if (error) {
-      console.error("❌ Error with mail transporter:", error.message);
-    } else {
-      console.log("✅ Mail transporter ready");
-    }
-  });
+  // transporter.verify((error, success) => {
+  //   if (error) {
+  //     console.error("❌ Error with mail transporter:", error.message);
+  //   } else {
+  //     console.log("✅ Mail transporter ready");
+  //   }
+  // });
+  try {
+    transporter = nodemailer.createTransport({
+      host: 'smtp.gmail.com',
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      }
+    });
+
+    console.log("Mail transporter created successfully");
+
+  } catch(err) {
+    console.error("Error while creating transporter");
+  }
 } else {
   console.warn(
     "⚠️ SMTP_USER / SMTP_PASS not set. Signup approval emails will NOT be sent."
