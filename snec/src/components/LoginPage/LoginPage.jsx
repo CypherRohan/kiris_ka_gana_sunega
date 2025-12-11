@@ -21,8 +21,20 @@ const LoginPage = ({ setIsAuthenticated }) => {
       }
       // Store admin secret in sessionStorage
       sessionStorage.setItem('adminSecret', adminSecret);
-      navigate('/admin');
-      return;
+      const response = await fetch('/api/admin/pending-signups', {
+        headers: {
+          'Content-Type': 'application/json',
+          'x-admin-secret': adminSecret,
+        },
+      });
+
+      if(response?.ok) {
+        navigate('/admin');
+      } else {
+        alert("Incorrect secret key");
+      }
+
+      return; 
     }
 
     const email = e.target.email.value.trim();
