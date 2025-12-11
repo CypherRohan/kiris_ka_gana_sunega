@@ -73,19 +73,21 @@ if (SMTP_USER && SMTP_PASS) {
   //     console.log("✅ Mail transporter ready");
   //   }
   // });
+  
+  transporter = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    }
+  });
+
+  // verify smtp transporter
   try {
-    transporter = nodemailer.createTransport({
-      host: 'smtp.gmail.com',
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-      }
-    });
-
-    console.log("Mail transporter created successfully");
-
+    await transporter.verify();
+    console.log('SMTP verified ✅');
   } catch(err) {
-    console.error("Error while creating transporter");
+    console.error('SMTP verify failed:', err);
   }
 } else {
   console.warn(
@@ -218,7 +220,7 @@ app.post("/api/signup", async (req, res) => {
 
         // Notify admin (if transporter configured)
         if (transporter) {
-          transporter.sendMail(
+          await transporter.sendMail(
             {
               from: SMTP_USER,
               to: ADMIN_EMAIL,
@@ -236,6 +238,7 @@ app.post("/api/signup", async (req, res) => {
               }
             }
           );
+
         } else {
           console.warn(
             "⚠️ Signup pending created but email not sent (no SMTP config)."
